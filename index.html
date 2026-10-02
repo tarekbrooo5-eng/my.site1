@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طارق إبراهيم | مصمم ومخرج فني</title>
+    <!-- استدعاء خط Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #141414;
+            --primary: #ff6b00;
+            --primary-glow: rgba(255, 107, 0, 0.4);
+            --text-main: #ffffff;
+            --text-muted: #b0b0b0;
+            --border-color: #262626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* تأثير مؤشر الماوس (خط دخان الطائرة) */
+        #smoke-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* الهيدر وشريط التنقل */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 8%;
+        }
+
+        /* حاوية اللوجو في الهيدر */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 1px solid var(--primary);
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text-main);
+            letter-spacing: 1px;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* القسم الرئيسي (Hero Section) */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 140px 20px 60px 20px;
+            position: relative;
+            background: radial-gradient(circle at center, #1a1005 0%, var(--bg-color) 70%);
+        }
+
+        /* حاوية الصورة المفرغة (PNG) مع وهج احترافي خلفها وبدون حدود دائرية مقيدة */
+        .profile-img-container {
+            width: 200px;
+            height: 220px;
+            margin-bottom: 25px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* تأثير الوهج البرتقالي الخلفي للصورة المفرغة */
+        .profile-img-container::before {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: var(--primary);
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.5;
+            z-index: 1;
+        }
+
+        .profile-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.6));
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 0 20px var(--primary-glow);
+            transition: 0.3s transform, 0.3s box-shadow;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        /* أقسام الموقع العامة */
+        section {
+            padding: 100px 8%;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 60px;
+        }
+
+        .section-title span {
+            color: var(--primary);
+        }
+
+        /* قسم عني */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 2;
+        }
+
+        /* معرض الأعمال */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .portfolio-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .portfolio-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .portfolio-img {
+            height: 200px;
+            background: #1f1f1f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary);
+            font-size: 3rem;
+        }
+
+        .portfolio-info {
+            padding: 25px;
+        }
+
+        .portfolio-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .portfolio-info p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* قسم التواصل */
+        .contact-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .contact-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .contact-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .contact-card i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .contact-card span {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        .contact-card:hover {
+            border-color: var(--primary);
+            background: #1a120b;
+            transform: translateY(-3px);
+        }
+
+        /* التذييل (Footer) */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* الاستجابة للشاشات الصغيرة */
+        @media(max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            nav ul { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- كانفس أثر الطائرة لمؤشر الماوس -->
+    <canvas id="smoke-canvas"></canvas>
+
+    <!-- شريط التنقل -->
+    <header>
+        <a href="#hero" class="logo-container">
+            <img src="logo.png" alt="شعار طارق إبراهيم" class="logo-img">
+            <div class="logo-text">طارق <span>إبراهيم</span></div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#hero">الرئيسية</a></li>
+                <li><a href="#about">عني</a></li>
+                <li><a href="#portfolio">معرض الأعمال</a></li>
+                <li><a href="#contact">تواصل معي</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- القسم الرئيسي (مع عرض صورتك الشخصية المفرغة بدمج احترافي) -->
+    <section id="hero" class="hero">
+        <div class="profile-img-container">
+            <!-- تأكد من أن اسم صورتك هنا يطابق اسم ملف الـ PNG الخاص بك -->
+            <img src="profile.png" alt="طارق إبراهيم - مصمم ومخرج فني">
+        </div>
+        <h1>أنا <span>طارق إبراهيم</span></h1>
+        <p>مصمم ومخرج فني محترف، أبتكر هويات بصرية متميزة وتجارب رقمية تعكس الجودة والإبداع المطلق.</p>
+        <a href="#portfolio" class="btn">استعرض أعمالي</a>
+    </section>
+
+    <!-- قسم نبذة عني -->
+    <section id="about">
+        <h2 class="section-title">نبذة <span>عني</span></h2>
+        <div class="about-content">
+            مخرج فني ومصمم جرافيك أمتلك شغفاً عميقاً بتحويل الأفكار إلى هويات بصرية وتصاميم تنبض بالحياة. أحرص دائماً على دمج دقة التفاصيل الفنية بالمعايير الإبداعية الحديثة لتقديم أعمال تترك أثراً استثنائياً لا يُنسى.
+        </div>
+    </section>
+
+    <!-- معرض الأعمال -->
+    <section id="portfolio">
+        <h2 class="section-title">معرض <span>الأعمال</span></h2>
+        <div class="portfolio-grid">
+            <div class="portfolio-card">
+                <div class="portfolio-img"><i class="fas fa-paint-brush"></i></div>
+                <div class="portfolio-info">
+                    <h3>الهويات البصرية</h3>
+                    <p>تصميم شعارات مبتكرة وهويات متكاملة للشركات والمشاريع الريادية.</p>
+                </div>
+            </div>
+            <div class="portfolio-card">
+                <div class="portfolio-img"><i class="fas fa-layer-group"></i></div>
+                <div class="portfolio-info">
+                    <h3>الإخراج الفني</h3>
+                    <p>إدارة وتوجيه المشاريع الفنية والمطبوعات بتناسق بصري مبهر.</p>
+                </div>
+            </div>
+            <div class="portfolio-card">
+                <div class="portfolio-img"><i class="fas fa-laptop-code"></i></div>
+                <div class="portfolio-info">
+                    <h3>التصميم الرقمي</h3>
+                    <p>تطوير وتصميم واجهات وتجارب مستخدم عصرية تناسب تطلعاتك.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم التواصل -->
+    <section id="contact">
+        <h2 class="section-title">تواصل <span>معي</span></h2>
+        <div class="contact-container">
+            <div class="contact-info-grid">
+                <!-- Behance -->
+                <a href="https://www.behance.net/tarekibrahem" target="_blank" class="contact-card">
+                    <i class="fab fa-behance"></i>
+                    <h3>Behance</h3>
+                    <span>tarekibrahem</span>
+                </a>
+                <!-- Pinterest -->
+                <a href="https://www.pinterest.com/Tarek4designs/" target="_blank" class="contact-card">
+                    <i class="fab fa-pinterest"></i>
+                    <h3>Pinterest</h3>
+                    <span>Tarek4designs</span>
+                </a>
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/share/1M31RVkWys/" target="_blank" class="contact-card">
+                    <i class="fab fa-facebook"></i>
+                    <h3>Facebook</h3>
+                    <span>حساب الفيسبوك</span>
+                </a>
+                <!-- Phone / WhatsApp -->
+                <a href="tel:00963934808111" class="contact-card">
+                    <i class="fas fa-phone-alt"></i>
+                    <h3>رقم الهاتف / واتساب</h3>
+                    <span>00963934808111</span>
+                </a>
+                <!-- Email -->
+                <a href="mailto:tarekbrooo5@gmail.com" class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>البريد الإلكتروني</h3>
+                    <span>tarekbrooo5@gmail.com</span>
+                </a>
+                <!-- Location Map -->
+                <a href="https://maps.app.goo.gl/jx8H8bbvxpkiKYAu8" target="_blank" class="contact-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>الموقع على الخريطة</h3>
+                    <span>عرض الموقع الجغرافي</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- التذييل -->
+    <footer>
+        <p>&copy; 2026 جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <!-- سكريبت أثر الدخان المتلاشي لمؤشر الماوس -->
+    <script>
+        const canvas = document.getElementById('smoke-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class SmokeParticle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 6 + 4;
+                this.speedX = (Math.random() - 0.5) * 1.5;
+                this.speedY = (Math.random() - 0.5) * 1.5;
+                this.life = 1.0; 
+                this.decay = Math.random() * 0.03 + 0.015; 
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.size += 0.2; 
+                this.life -= this.decay;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 107, 0, ${this.life * 0.35})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            for (let i = 0; i < 2; i++) {
+                particles.push(new SmokeParticle(e.clientX, e.clientY));
+            }
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
